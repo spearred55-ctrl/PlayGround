@@ -1,0 +1,11 @@
+{
+  "appId": "com.battleworld.elitesurvival",
+  "appName": "BATTLE WORLD",
+  "webDir": "dist",
+  "backgroundColor": "#071019",
+  "android": {
+    "allowMixedContent": false,
+    "captureInput": true,
+    "webContentsDebuggingEnabled": false
+  }
+}

@@ -1,0 +1,487 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" />
+  <meta name="theme-color" content="#071019" />
+  <meta name="description" content="BATTLE WORLD: ELITE SURVIVAL — an original 3D battle royale. Drop into the Island of Ash, loot, fight and survive." />
+  <title>BATTLE WORLD: ELITE SURVIVAL</title>
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%23070f18'/%3E%3Cpath d='M32 9 53 48H11z' fill='%23ff7a1a'/%3E%3Cpath d='M32 20 44 43H20z' fill='%23ffd166'/%3E%3C/svg%3E" />
+  <link rel="stylesheet" href="/src/style.css" />
+</head>
+<body>
+<div id="app">
+  <canvas id="game-canvas" aria-label="Battle World game viewport"></canvas>
+  <div id="screen-vignette"></div>
+
+  <!-- ══════════════ LOADING ══════════════ -->
+  <section id="loading-screen" class="screen loading-screen">
+    <div class="load-emblem">
+      <svg viewBox="0 0 120 120" aria-hidden="true">
+        <defs>
+          <linearGradient id="lg" x1="0" y1="0" x2="1" y2="1">
+            <stop offset="0" stop-color="#ffb347"/><stop offset=".55" stop-color="#ff7a1a"/><stop offset="1" stop-color="#e03d0c"/>
+          </linearGradient>
+        </defs>
+        <path d="M60 6 112 104H8Z" fill="none" stroke="url(#lg)" stroke-width="4"/>
+        <path d="M60 28 94 91H26Z" fill="url(#lg)" opacity=".2"/>
+        <path d="M60 40 78 76H42Z" fill="url(#lg)"/>
+        <path d="M60 6v22M8 104l24-14M112 104 88 90" stroke="#9fdcff" stroke-width="2" opacity=".7"/>
+      </svg>
+    </div>
+    <h1 class="load-title">BATTLE<span>WORLD</span></h1>
+    <div class="load-sub">ELITE SURVIVAL</div>
+    <div class="load-bar"><i id="load-fill"></i></div>
+    <div class="load-row"><span id="load-status">INITIALIZING ISLAND</span><span id="load-percent">0%</span></div>
+    <div id="load-tip" class="load-tip">TIP — Loot armor before you pick a fight. It absorbs damage before your health.</div>
+  </section>
+
+  <!-- ══════════════ MENU ══════════════ -->
+  <section id="menu-screen" class="screen menu-screen hidden">
+    <div class="menu-scrim"></div>
+    <header class="menu-top">
+      <div class="brand">
+        <svg class="brand-mark" viewBox="0 0 120 120" aria-hidden="true">
+          <path d="M60 6 112 104H8Z" fill="none" stroke="#ff8a2b" stroke-width="5"/>
+          <path d="M60 34 84 82H36Z" fill="#ff8a2b"/>
+          <path d="M60 6v24M8 104l24-14M112 104 88 90" stroke="#9fdcff" stroke-width="2.5" opacity=".8"/>
+        </svg>
+        <div class="brand-type"><b>BATTLE<span>WORLD</span></b><em>ELITE SURVIVAL</em></div>
+      </div>
+      <div class="season-chip"><i></i> SEASON 01 <span>ISLAND OF ASH</span></div>
+      <div class="profile-chip" id="profile-chip" role="button" tabindex="0" aria-label="Open profile">
+        <div class="avatar" id="menu-avatar"><span>N</span></div>
+        <div class="profile-meta">
+          <div class="profile-name"><span id="menu-name">NOVA-07</span><b id="menu-level">LV 1</b></div>
+          <div class="xp-bar"><i id="menu-xp"></i></div>
+          <div class="profile-stats"><span id="menu-xp-label">0 / 100 XP</span><span id="menu-rank">ROOKIE</span></div>
+        </div>
+        <button class="icon-btn" id="btn-settings-top" aria-label="Settings">
+          <svg viewBox="0 0 24 24"><path d="M12 8a4 4 0 1 0 0 8 4 4 0 0 0 0-8Zm9 4-2.2-.8-.6-1.5 1-2.1-2.8-2.8-2.1 1-1.5-.6L12 3H8l-.8 2.2-1.5.6-2.1-1-2.8 2.8 1 2.1-.6 1.5L1 12v4l2.2.8.6 1.5-1 2.1 2.8 2.8 2.1-1 1.5.6L12 25h4l.8-2.2 1.5-.6 2.1 1 2.8-2.8-1-2.1.6-1.5L25 16v-4Z" transform="scale(.8) translate(3 3)"/></svg>
+        </button>
+      </div>
+    </header>
+
+    <div class="menu-main">
+      <section class="menu-left">
+        <div class="eyebrow">SELECT DEPLOYMENT</div>
+        <div class="mode-grid" id="mode-grid">
+          <button class="mode-card active" data-mode="solo">
+            <span class="mode-icon"><svg viewBox="0 0 24 24"><circle cx="12" cy="8" r="3.4"/><path d="M4.5 21c.5-4.4 3.3-6.6 7.5-6.6s7 2.2 7.5 6.6"/></svg></span>
+            <b>SOLO</b><em>1 OPERATIVE</em>
+          </button>
+          <button class="mode-card" data-mode="duo">
+            <span class="mode-icon"><svg viewBox="0 0 24 24"><circle cx="8.5" cy="8.5" r="2.8"/><circle cx="16.5" cy="9.5" r="2.4"/><path d="M2 21c.4-3.8 2.7-5.8 6.5-5.8S14.6 17.2 15 21M13.5 21c.3-3 2-4.6 5-4.6 1.3 0 2.4.3 3.3 1"/></svg></span>
+            <b>DUO</b><em>2 OPERATIVES</em>
+          </button>
+          <button class="mode-card" data-mode="squad">
+            <span class="mode-icon"><svg viewBox="0 0 24 24"><circle cx="6.5" cy="9" r="2.4"/><circle cx="12" cy="7.5" r="2.6"/><circle cx="17.5" cy="9" r="2.4"/><path d="M1 21c.3-3.3 2.2-5 5.5-5M11.5 21c.3-4 2.8-6 6.3-6M8.8 21c.2-3.4 1.7-5.2 4.2-5.2s4 1.8 4.2 5.2"/></svg></span>
+            <b>SQUAD</b><em>4 OPERATIVES</em>
+          </button>
+          <button class="mode-card practice" data-mode="practice">
+            <span class="mode-icon"><svg viewBox="0 0 24 24"><path d="M12 3v18M3 12h18"/><circle cx="12" cy="12" r="8.5"/><circle cx="12" cy="12" r="2.2"/></svg></span>
+            <b>PRACTICE</b><em>BOT ARENA</em>
+          </button>
+        </div>
+
+        <div class="match-card">
+          <div class="match-map">
+            <canvas id="menu-map" width="300" height="300"></canvas>
+            <div class="map-scan"></div>
+            <span class="map-tag">ISLAND OF ASH</span>
+          </div>
+          <div class="match-info">
+            <div class="match-title">AURORA PROTOCOL <span>LIVE</span></div>
+            <div class="match-sub">A 6&nbsp;km² island. One survivor.</div>
+            <div class="match-stats">
+              <div><b id="menu-match-size">25</b><span>OPERATIVES</span></div>
+              <div><b>10</b><span>LANDMARKS</span></div>
+              <div><b id="menu-match-time">18:00</b><span>ZONE CYCLE</span></div>
+            </div>
+            <div class="match-chips">
+              <span><i class="dot green"></i><span id="server-label">LOCAL PRACTICE</span></span>
+              <span><i class="dot amber"></i>NO RESPAWN</span>
+              <span><i class="dot cyan"></i>TOUCH READY</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="cta-row">
+          <button id="btn-play" class="play-btn" aria-label="Play">
+            <span class="play-btn-glow"></span>
+            <span class="play-label">PLAY</span>
+            <span class="play-sub" id="play-sub">SOLO • 25 OPERATIVES</span>
+            <svg class="play-arrow" viewBox="0 0 24 24"><path d="M5 12h13M13 6l6 6-6 6"/></svg>
+          </button>
+          <button id="btn-online" class="online-btn" title="Online matchmaking">
+            <svg viewBox="0 0 24 24"><path d="M4 12a8 8 0 0 1 16 0M7 15a5 5 0 0 1 10 0M10 18a2 2 0 0 1 4 0"/></svg>
+            <span>ONLINE<em id="online-state">SERVER OFFLINE</em></span>
+          </button>
+        </div>
+        <div class="menu-hint">Press <kbd>Enter</kbd> to deploy · <kbd>Esc</kbd> for menu · Mouse + keyboard or touch</div>
+      </section>
+
+      <aside class="menu-right">
+        <div class="operator-card">
+          <div class="op-head"><span>ACTIVE OPERATIVE</span><b id="op-role">RECON</b></div>
+          <div class="op-name" id="op-name">NOVA-07</div>
+          <div class="op-sub">ELITE SURVIVAL UNIT · ORIGINAL CHARACTER</div>
+          <div class="op-stats">
+            <div><span>MOBILITY</span><i><b style="width:78%"></b></i></div>
+            <div><span>PRECISION</span><i><b style="width:86%"></b></i></div>
+            <div><span>STEALTH</span><i><b style="width:64%"></b></i></div>
+          </div>
+          <div class="op-actions">
+            <button class="ghost-btn" data-panel="character">CUSTOMIZE</button>
+            <button class="ghost-btn" data-panel="profile">SERVICE RECORD</button>
+          </div>
+          <div class="skin-row" id="menu-skins"></div>
+        </div>
+      </aside>
+    </div>
+
+    <nav class="menu-nav">
+      <button data-panel="loadout"><svg viewBox="0 0 24 24"><path d="M3 14h7l2-5h5l4 5v4H3zM6 18v2M19 18v2M8 9V5h4"/></svg><span>ARSENAL</span></button>
+      <button data-panel="character"><svg viewBox="0 0 24 24"><circle cx="12" cy="8" r="3.5"/><path d="M5 21c.6-4.5 3.4-6.8 7-6.8s6.4 2.3 7 6.8"/></svg><span>OPERATOR</span></button>
+      <button data-panel="profile"><svg viewBox="0 0 24 24"><path d="M4 20V10M10 20V4M16 20v-7M22 20H2"/></svg><span>PROFILE</span></button>
+      <button data-panel="settings"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="3"/><path d="M12 2v3M12 19v3M2 12h3M19 12h3M4.9 4.9l2.1 2.1M17 17l2.1 2.1M19.1 4.9 17 7M7 17l-2.1 2.1"/></svg><span>SETTINGS</span></button>
+      <button data-panel="help"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M9.5 9a2.5 2.5 0 1 1 3.5 2.3c-.7.3-1 .8-1 1.7M12 17h.01"/></svg><span>FIELD MANUAL</span></button>
+    </nav>
+
+    <footer class="menu-footer">
+      <span>BATTLE WORLD <b>v1.0.0</b> · ORIGINAL BUILD</span>
+      <span class="footer-right"><i></i> ISLAND SIMULATION ONLINE · <b id="menu-fps">-- FPS</b></span>
+    </footer>
+  </section>
+
+  <!-- ══════════════ HUD ══════════════ -->
+  <section id="hud" class="hud hidden">
+    <div class="hud-top">
+      <div class="hud-block alive-block">
+        <div class="alive-num"><b id="hud-alive">25</b><span>ALIVE</span></div>
+        <div class="hud-kills"><svg viewBox="0 0 24 24"><path d="M5 19 19 5M5 5l14 14M8 2 6 5M18 2l2 3"/></svg><b id="hud-kills">0</b></div>
+      </div>
+      <div class="compass-wrap">
+        <div class="compass" id="compass"><div class="compass-track" id="compass-track"></div><div class="compass-needle"></div></div>
+        <div class="zone-strip">
+          <span id="zone-phase">ZONE 1</span>
+          <i class="zone-timer" id="zone-timer">00:30</i>
+          <span id="zone-state">SHRINKING IN</span>
+        </div>
+      </div>
+      <div class="hud-block hud-right">
+        <div class="match-id">ISLAND OF ASH <b id="hud-mode">SOLO</b></div>
+        <div class="network"><i id="net-dot"></i><span id="net-label">LOCAL · 60 TICK</span></div>
+      </div>
+    </div>
+
+    <div id="killfeed" class="killfeed"></div>
+    <div id="announce" class="announce"></div>
+    <div id="match-banner" class="match-banner hidden"><b>DEPLOYMENT COMPLETE</b><span>AURORA PROTOCOL · LAST OPERATIVE STANDING</span></div>
+
+    <div id="crosshair" class="crosshair">
+      <i class="ch ch-t"></i><i class="ch ch-r"></i><i class="ch ch-b"></i><i class="ch ch-l"></i>
+      <i class="ch-dot"></i>
+      <div id="hitmarker" class="hitmarker"><i></i><i></i><i></i><i></i></div>
+    </div>
+    <div id="damage-indicator" class="damage-indicator"></div>
+    <div id="damage-vignette" class="damage-vignette"></div>
+
+    <div id="interact-prompt" class="interact-prompt hidden">
+      <button id="interact-btn"><span class="key">E</span><b id="interact-label">PICK UP</b></button>
+    </div>
+
+    <div class="hud-bottom">
+      <div class="vitals">
+        <div class="vitals-name"><b id="hud-player-name">NOVA-07</b><span id="hud-team">SOLO</span></div>
+        <div class="bar armor-bar"><i id="armor-fill"></i><span id="armor-text">0</span><em>ARMOR</em></div>
+        <div class="bar health-bar"><i id="health-fill"></i><span id="health-text">100</span><em>HEALTH</em></div>
+        <div class="vitals-row">
+          <span id="hud-helmet" class="equip-tag">NO HELMET</span>
+          <span id="hud-backpack" class="equip-tag">PACK L1</span>
+          <span id="hud-status" class="status-tag">READY</span>
+        </div>
+        <div id="heal-progress" class="heal-progress hidden"><i></i><span>USING MEDKIT</span></div>
+      </div>
+
+      <div class="weapon-hud">
+        <div class="weapon-slots">
+          <div class="wslot active" data-slot="0"><b>1</b><span>—</span><em>EMPTY</em></div>
+          <div class="wslot" data-slot="1"><b>2</b><span>—</span><em>EMPTY</em></div>
+          <div class="wslot melee" data-slot="2"><b>3</b><span>MACHETE</span><em>MELEE</em></div>
+        </div>
+        <div class="ammo-panel">
+          <div class="ammo-main"><b id="ammo-mag">—</b><span>/ <i id="ammo-reserve">—</i></span></div>
+          <div class="ammo-meta"><span id="weapon-name">UNARMED</span><em id="fire-mode">SEMI</em></div>
+          <div class="reload-bar hidden" id="reload-bar"><i></i></div>
+        </div>
+      </div>
+
+      <div class="minimap-wrap">
+        <div class="minimap-frame">
+          <canvas id="minimap" width="220" height="220"></canvas>
+          <div class="mini-grid"></div>
+          <span class="mini-n">N</span>
+        </div>
+        <div class="mini-info"><span id="mini-zone">ZONE 1</span><b id="mini-timer">00:30</b></div>
+        <button id="btn-map" class="mini-map-btn" aria-label="Open map"><svg viewBox="0 0 24 24"><path d="m3 6 6-3 6 3 6-3v15l-6 3-6-3-6 3zM9 3v15M15 6v15"/></svg></button>
+      </div>
+    </div>
+
+    <div class="quick-actions">
+      <button class="quick-btn" data-action="inventory" aria-label="Inventory"><svg viewBox="0 0 24 24"><path d="M4 7h16v14H4zM8 7V4h8v3M9 11v6M15 11v6"/></svg><span>PACK</span></button>
+      <button class="quick-btn" data-action="med" aria-label="Use medkit"><svg viewBox="0 0 24 24"><path d="M9 3h6v6h6v6h-6v6H9v-6H3V9h6z"/></svg><span>HEAL</span></button>
+      <button class="quick-btn" data-action="grenade" aria-label="Throw grenade"><svg viewBox="0 0 24 24"><circle cx="12" cy="14" r="6"/><path d="M9 8h6M12 8V4M15 5l3-2M7 3l2 2"/></svg><span>FRAG</span></button>
+      <button class="quick-btn" data-action="map" aria-label="Open map"><svg viewBox="0 0 24 24"><path d="m3 6 6-3 6 3 6-3v15l-6 3-6-3-6 3zM9 3v15M15 6v15"/></svg><span>MAP</span></button>
+      <button class="quick-btn" data-action="pause" aria-label="Pause"><svg viewBox="0 0 24 24"><path d="M7 4v16M17 4v16"/></svg><span>MENU</span></button>
+    </div>
+
+    <div id="spectate-banner" class="spectate-banner hidden">
+      <span>SPECTATING</span><b id="spectate-name">—</b>
+      <div><button id="btn-spectate-next">NEXT</button><button id="btn-spectate-exit">EXIT</button></div>
+    </div>
+  </section>
+
+  <!-- ══════════════ TOUCH CONTROLS ══════════════ -->
+  <section id="touch-controls" class="touch-controls hidden">
+    <div id="joystick" class="joystick" data-action="joystick">
+      <div class="joystick-ring"></div>
+      <div class="joystick-knob" id="joystick-knob"></div>
+      <span>MOVE</span>
+    </div>
+    <button class="tbtn tbtn-fire" data-action="fire" aria-label="Fire">
+      <svg viewBox="0 0 64 64"><circle cx="32" cy="32" r="12"/><path d="M32 8v10M32 46v10M8 32h10M46 32h10"/></svg><span>FIRE</span>
+    </button>
+    <button class="tbtn tbtn-aim" data-action="aim" aria-label="Aim">
+      <svg viewBox="0 0 64 64"><circle cx="32" cy="32" r="18"/><circle cx="32" cy="32" r="3"/><path d="M32 6v10M32 48v10M6 32h10M48 32h10"/></svg><span>AIM</span>
+    </button>
+    <button class="tbtn tbtn-jump" data-action="jump" aria-label="Jump">
+      <svg viewBox="0 0 64 64"><path d="M32 50V16M18 30l14-14 14 14M14 52h36"/></svg><span>JUMP</span>
+    </button>
+    <button class="tbtn tbtn-crouch" data-action="crouch" aria-label="Crouch">
+      <svg viewBox="0 0 64 64"><circle cx="36" cy="16" r="6"/><path d="M34 24 26 38l10 6 6-10M20 52h28M26 38l-6 14"/></svg><span>CROUCH</span>
+    </button>
+    <button class="tbtn tbtn-reload" data-action="reload" aria-label="Reload">
+      <svg viewBox="0 0 64 64"><path d="M50 24a20 20 0 1 0 2 18M50 10v14H36"/></svg><span>RELOAD</span>
+    </button>
+    <button class="tbtn tbtn-swap" data-action="swap" aria-label="Switch weapon">
+      <svg viewBox="0 0 64 64"><path d="M12 24h40M42 14l10 10-10 10M52 44H12M22 34 12 44l10 10"/></svg><span>SWAP</span>
+    </button>
+    <button class="tbtn tbtn-interact" data-action="interact" aria-label="Interact">
+      <svg viewBox="0 0 64 64"><path d="M32 8v40M18 22l14-14 14 14M16 54h32"/></svg><span>PICK UP</span>
+    </button>
+    <button class="tbtn tbtn-sprint" data-action="sprint" aria-label="Sprint">
+      <svg viewBox="0 0 64 64"><path d="M38 10 18 36h14l-6 18 20-26H32z"/></svg><span>SPRINT</span>
+    </button>
+    <button class="tbtn tbtn-vehicle" data-action="vehicle" aria-label="Enter or exit vehicle">
+      <svg viewBox="0 0 64 64"><path d="M10 36h44l-6-12H20zM16 36v12M48 36v12M22 48a4 4 0 1 0 8 0M36 48a4 4 0 1 0 8 0"/></svg><span>DRIVE</span>
+    </button>
+  </section>
+
+  <!-- ══════════════ OVERLAYS ══════════════ -->
+  <div id="overlay-root" class="overlay-root">
+    <div id="overlay-backdrop" class="overlay-backdrop"></div>
+
+    <!-- Inventory -->
+    <section class="panel panel-inventory" data-panel-id="inventory">
+      <header class="panel-head"><div><span>FIELD PACK</span><h2>INVENTORY</h2></div><div class="pack-cap"><b id="inv-cap">0</b>/<span id="inv-cap-max">12</span><em>SLOTS</em></div><button class="close-btn" data-close>✕</button></header>
+      <div class="inv-grid">
+        <div class="inv-col">
+          <h3>WEAPONS</h3>
+          <div id="inv-weapons" class="inv-weapons"></div>
+          <h3>AMMUNITION</h3>
+          <div id="inv-ammo" class="inv-ammo"></div>
+        </div>
+        <div class="inv-col">
+          <h3>CONSUMABLES &amp; GEAR</h3>
+          <div id="inv-items" class="inv-items"></div>
+          <h3>GROUND</h3>
+          <div id="inv-ground" class="inv-ground"></div>
+        </div>
+      </div>
+      <footer class="panel-foot"><span>Tap an item to use, equip or drop.</span><span>BACKPACK CAPACITY <b id="inv-backpack">L1</b></span></footer>
+    </section>
+
+    <!-- Map -->
+    <section class="panel panel-map" data-panel-id="map">
+      <header class="panel-head"><div><span>TACTICAL OVERVIEW</span><h2>ISLAND OF ASH</h2></div><button class="close-btn" data-close>✕</button></header>
+      <div class="full-map-wrap">
+        <canvas id="full-map" width="900" height="900"></canvas>
+        <div class="map-legend">
+          <span><i class="lg you"></i>YOU</span><span><i class="lg team"></i>TEAM</span><span><i class="lg zone"></i>SAFE ZONE</span><span><i class="lg next"></i>NEXT ZONE</span><span><i class="lg poi"></i>LANDMARK</span>
+        </div>
+        <div class="map-coords" id="map-coords">GRID 0-0 · ALT 0M</div>
+      </div>
+      <footer class="panel-foot"><span>Zone shrinks toward the marked circle.</span><span id="map-zone-info">ZONE 1 · 00:30</span></footer>
+    </section>
+
+    <!-- Settings -->
+    <section class="panel panel-settings" data-panel-id="settings">
+      <header class="panel-head"><div><span>SYSTEM</span><h2>SETTINGS</h2></div><button class="close-btn" data-close>✕</button></header>
+      <div class="settings-body">
+        <div class="settings-group">
+          <h3>GRAPHICS</h3>
+          <label>QUALITY<select id="set-quality"><option value="low">LOW · 30 FPS</option><option value="medium">MEDIUM · BALANCED</option><option value="high">HIGH · CINEMATIC</option></select></label>
+          <label>RENDER SCALE<input type="range" id="set-scale" min="60" max="100" step="5"><output id="set-scale-out">100%</output></label>
+          <label class="switch-row">SHADOWS<input type="checkbox" id="set-shadows"><span class="switch"></span></label>
+          <label class="switch-row">MOTION BLUR<input type="checkbox" id="set-motion"><span class="switch"></span></label>
+        </div>
+        <div class="settings-group">
+          <h3>CONTROLS</h3>
+          <label>LOOK SENSITIVITY<input type="range" id="set-sens" min="20" max="200" step="5"><output id="set-sens-out">100</output></label>
+          <label>BUTTON SCALE<input type="range" id="set-btnsize" min="70" max="130" step="5"><output id="set-btnsize-out">100%</output></label>
+          <label class="switch-row">AUTO SPRINT<input type="checkbox" id="set-autosprint"><span class="switch"></span></label>
+          <label class="switch-row">AIM ASSIST<input type="checkbox" id="set-aimassist"><span class="switch"></span></label>
+          <button class="wide-btn" id="btn-edit-layout">EDIT TOUCH LAYOUT</button>
+        </div>
+        <div class="settings-group">
+          <h3>AUDIO</h3>
+          <label>MASTER VOLUME<input type="range" id="set-volume" min="0" max="100" step="5"><output id="set-volume-out">80%</output></label>
+          <label>SFX VOLUME<input type="range" id="set-sfx" min="0" max="100" step="5"><output id="set-sfx-out">100%</output></label>
+          <label class="switch-row">ZONE WARNING<input type="checkbox" id="set-zoneaudio"><span class="switch"></span></label>
+        </div>
+        <div class="settings-group">
+          <h3>MATCH</h3>
+          <label>OPERATIVES PER MATCH<select id="set-matchsize"><option value="10">10 · QUICK</option><option value="25">25 · STANDARD</option><option value="35">35 · WARZONE</option><option value="50">50 · FULL CAPACITY</option></select></label>
+          <label>BOT DIFFICULTY<select id="set-botskill"><option value="recruit">RECRUIT</option><option value="veteran">VETERAN</option><option value="elite">ELITE</option></select></label>
+          <label class="switch-row">SHOW FPS<input type="checkbox" id="set-fps"><span class="switch"></span></label>
+          <button class="wide-btn danger" id="btn-reset-save">RESET PROFILE &amp; SETTINGS</button>
+        </div>
+      </div>
+      <footer class="panel-foot"><span>Settings save automatically on this device.</span><span id="settings-device">ANDROID / WEB</span></footer>
+    </section>
+
+    <!-- Profile -->
+    <section class="panel panel-profile" data-panel-id="profile">
+      <header class="panel-head"><div><span>SERVICE RECORD</span><h2>OPERATIVE PROFILE</h2></div><button class="close-btn" data-close>✕</button></header>
+      <div class="profile-body">
+        <div class="profile-hero">
+          <div class="profile-badge" id="profile-badge">N</div>
+          <div><h3 id="profile-name">NOVA-07</h3><p id="profile-rank">ROOKIE · LEVEL 1</p><div class="xp-bar big"><i id="profile-xp"></i></div><span id="profile-xp-label">0 / 100 XP TO NEXT LEVEL</span></div>
+        </div>
+        <div class="stat-grid">
+          <div><b id="stat-matches">0</b><span>MATCHES</span></div>
+          <div><b id="stat-wins">0</b><span>VICTORIES</span></div>
+          <div><b id="stat-kills">0</b><span>ELIMINATIONS</span></div>
+          <div><b id="stat-kd">0.00</b><span>K / D</span></div>
+          <div><b id="stat-damage">0</b><span>DAMAGE</span></div>
+          <div><b id="stat-best">—</b><span>BEST PLACE</span></div>
+          <div><b id="stat-time">0m</b><span>TIME PLAYED</span></div>
+          <div><b id="stat-level">1</b><span>LEVEL</span></div>
+        </div>
+        <div class="profile-skins">
+          <h3>UNLOCKED OPERATOR SKINS</h3>
+          <div id="profile-skin-list" class="skin-list"></div>
+        </div>
+      </div>
+      <footer class="panel-foot"><span>Cosmetics never affect combat stats.</span><span id="profile-season">SEASON 01 · ISLAND OF ASH</span></footer>
+    </section>
+
+    <!-- Character -->
+    <section class="panel panel-character" data-panel-id="character">
+      <header class="panel-head"><div><span>OPERATIVE BAY</span><h2>CHARACTER</h2></div><button class="close-btn" data-close>✕</button></header>
+      <div class="character-body">
+        <div class="char-preview"><div class="char-scan"></div><span>LIVE PREVIEW</span></div>
+        <div class="char-options">
+          <label class="text-label">CALLSIGN<input id="char-name" maxlength="14" spellcheck="false"></label>
+          <div class="swatch-group"><h3>OUTFIT COLOR</h3><div id="char-colors" class="swatches"></div></div>
+          <div class="swatch-group"><h3>HAIR / HEADGEAR</h3><div id="char-hair" class="swatches hair"></div></div>
+          <div class="swatch-group"><h3>OPERATOR SKINS</h3><div id="char-skins" class="skin-list"></div></div>
+          <p class="cosmetic-note">All outfits are cosmetic. Combat power is earned from loot only.</p>
+        </div>
+      </div>
+      <footer class="panel-foot"><span>Changes appear in the lobby and in match.</span><span id="char-level-note">EARN XP TO UNLOCK MORE</span></footer>
+    </section>
+
+    <!-- Arsenal -->
+    <section class="panel panel-loadout" data-panel-id="loadout">
+      <header class="panel-head"><div><span>WEAPON CODEX</span><h2>ARSENAL</h2></div><button class="close-btn" data-close>✕</button></header>
+      <div class="arsenal-body">
+        <div class="arsenal-tabs" id="arsenal-tabs">
+          <button class="active" data-cat="all">ALL</button><button data-cat="ar">AR</button><button data-cat="smg">SMG</button><button data-cat="shotgun">SHOTGUN</button><button data-cat="sniper">SNIPER</button><button data-cat="lmg">LMG</button><button data-cat="pistol">PISTOL</button><button data-cat="melee">MELEE</button>
+        </div>
+        <div id="arsenal-list" class="arsenal-list"></div>
+      </div>
+      <footer class="panel-foot"><span>Weapons are found in the field. Rarity improves handling and attachments.</span><span>8 CATEGORIES · ORIGINAL DESIGNS</span></footer>
+    </section>
+
+    <!-- Help -->
+    <section class="panel panel-help" data-panel-id="help">
+      <header class="panel-head"><div><span>FIELD MANUAL</span><h2>HOW TO SURVIVE</h2></div><button class="close-btn" data-close>✕</button></header>
+      <div class="help-body">
+        <div class="help-grid">
+          <div><h3>TOUCH</h3><p>Left joystick moves. Drag the right side to look. Fire, aim, jump, crouch and reload with the right-side buttons. Use PACK to manage loot and MAP for the island.</p></div>
+          <div><h3>KEYBOARD</h3><p><kbd>WASD</kbd> move · <kbd>Mouse</kbd> look · <kbd>LMB</kbd> fire · <kbd>RMB</kbd> aim · <kbd>R</kbd> reload · <kbd>1/2/3</kbd> weapons · <kbd>Space</kbd> jump · <kbd>C</kbd> crouch · <kbd>Shift</kbd> sprint · <kbd>E</kbd> interact · <kbd>Tab</kbd> pack · <kbd>M</kbd> map.</p></div>
+          <div><h3>THE ZONE</h3><p>The Aurora wall closes in phases. Outside it you take damage. Watch the timer and rotate early. The blue ring is the current safe zone; the amber ring shows where it will close next.</p></div>
+          <div><h3>LOOT</h3><p>Weapons, ammo, armor, helmets, backpacks and medical supplies spawn at landmarks. Rarer weapons handle better. Armor absorbs damage; helmets reduce headshot damage.</p></div>
+          <div><h3>VEHICLES</h3><p>Find the ridge buggy near roads and landmarks. Press interact to drive, steer with the joystick, and exit before the vehicle takes too much damage.</p></div>
+          <div><h3>VICTORY</h3><p>Be the last operative or team standing. Eliminated players can spectate the remaining match. Practice mode is a smaller, faster bot arena.</p></div>
+        </div>
+      </div>
+      <footer class="panel-foot"><span>Original characters, weapons and island. No third-party game assets.</span><span>BATTLE WORLD · ELITE SURVIVAL</span></footer>
+    </section>
+
+    <!-- Pause -->
+    <section class="panel panel-pause" data-panel-id="pause">
+      <header class="panel-head"><div><span>MATCH PAUSED</span><h2>COMMAND MENU</h2></div><button class="close-btn" data-close>✕</button></header>
+      <div class="pause-body">
+        <button class="wide-btn primary" data-resume>RESUME MATCH</button>
+        <button class="wide-btn" data-panel="settings">SETTINGS</button>
+        <button class="wide-btn" data-panel="help">FIELD MANUAL</button>
+        <button class="wide-btn" data-action="edit-layout">EDIT TOUCH LAYOUT</button>
+        <button class="wide-btn danger" id="btn-leave-match">LEAVE MATCH</button>
+      </div>
+      <footer class="panel-foot"><span>Single-player local simulation is paused.</span><span id="pause-stats">ALIVE 25 · KILLS 0</span></footer>
+    </section>
+
+    <!-- Result -->
+    <section class="panel panel-result" data-panel-id="result">
+      <div id="result-visual" class="result-visual"></div>
+      <div class="result-content">
+        <span id="result-kicker">MATCH COMPLETE</span>
+        <h2 id="result-title">ELITE VICTORY</h2>
+        <p id="result-sub">Last operative standing on the Island of Ash.</p>
+        <div class="result-stats">
+          <div><b id="res-place">#1</b><span>PLACEMENT</span></div>
+          <div><b id="res-kills">0</b><span>ELIMINATIONS</span></div>
+          <div><b id="res-damage">0</b><span>DAMAGE</span></div>
+          <div><b id="res-xp">+0</b><span>XP EARNED</span></div>
+        </div>
+        <div class="result-actions">
+          <button class="wide-btn primary" id="btn-play-again">PLAY AGAIN</button>
+          <button class="wide-btn" id="btn-result-spectate">SPECTATE</button>
+          <button class="wide-btn" id="btn-result-lobby">RETURN TO LOBBY</button>
+        </div>
+      </div>
+    </section>
+
+    <!-- Matchmaking -->
+    <section class="panel panel-matchmaking" data-panel-id="matchmaking">
+      <div class="mm-head"><span>ONLINE SERVICES</span><h2>MATCHMAKING</h2></div>
+      <div class="mm-radar"><i></i><i></i><i></i><b id="mm-count">0</b><span>OPERATIVES FOUND</span></div>
+      <div class="mm-status" id="mm-status">CONTACTING DEDICATED SERVER…</div>
+      <div class="mm-bar"><i id="mm-fill"></i></div>
+      <div class="mm-note">Online play requires the included authoritative server. The static preview runs the local bot simulation instead.</div>
+      <div class="mm-actions"><button class="wide-btn primary" id="btn-mm-local">PLAY LOCAL MATCH</button><button class="wide-btn" data-close>CANCEL</button></div>
+    </section>
+
+    <!-- Layout editor -->
+    <section class="panel panel-layout" data-panel-id="layout">
+      <header class="panel-head"><div><span>TOUCH CONFIGURATION</span><h2>BUTTON LAYOUT</h2></div><button class="close-btn" data-close>✕</button></header>
+      <div class="layout-body">
+        <p>Drag any control to reposition it. Your layout is saved on this device.</p>
+        <div class="layout-demo"><div class="demo-note">CONTROLS UNLOCKED</div></div>
+        <div class="layout-actions"><button class="wide-btn" id="btn-layout-reset">RESET DEFAULT</button><button class="wide-btn primary" id="btn-layout-done">SAVE LAYOUT</button></div>
+      </div>
+      <footer class="panel-foot"><span>Use the button scale slider in Settings for size.</span><span>TOUCH LAYOUT · V1</span></footer>
+    </section>
+  </div>
+
+  <div id="toast-root" class="toast-root"></div>
+  <div id="layout-edit-banner" class="layout-edit-banner hidden">LAYOUT EDIT MODE · DRAG CONTROLS · <button id="btn-layout-save">SAVE</button> <button id="btn-layout-cancel">CANCEL</button></div>
+  <div id="rotate-hint" class="rotate-hint hidden"><span>↻</span><b>ROTATE YOUR DEVICE</b><p>BATTLE WORLD is best played in landscape.</p></div>
+  <div id="fatal-error" class="fatal-error hidden"><b>RENDERER UNAVAILABLE</b><p id="fatal-message">This device could not start WebGL.</p></div>
+</div>
+<script type="module" src="/src/main.js"></script>
+</body>
+</html>
