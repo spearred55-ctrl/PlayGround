@@ -1,0 +1,63 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover" />
+  <meta name="theme-color" content="#080e1a" />
+  <meta name="description" content="Mini Clash — a tiny 2D lane-battler. Deploy troops, break towers, take the King." />
+  <title>Mini Clash — 2D Arena</title>
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%230b1626'/%3E%3Cpath d='M12 42h40l-4-20-10 8-2-14-8 12-8-12-2 14-10-8z' fill='%23ffc63d'/%3E%3Crect x='12' y='44' width='40' height='8' rx='3' fill='%23e9a819'/%3E%3C/svg%3E" />
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  <div id="app">
+    <canvas id="game" width="720" height="1280" aria-label="Mini Clash game arena"></canvas>
+
+    <div id="overlay" class="overlay">
+      <section id="menu-panel" class="panel menu-panel">
+        <div class="crest" aria-hidden="true">
+          <svg viewBox="0 0 64 64"><path d="M10 46h44l-5-24-10 8-4-16-7 13-7-13-4 16-10-8z" fill="url(#gold)"/><rect x="10" y="48" width="44" height="8" rx="4" fill="#b87d12"/><defs><linearGradient id="gold" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#ffe58a"/><stop offset="1" stop-color="#f0a91f"/></linearGradient></defs></svg>
+        </div>
+        <h1 class="logo">MINI <span>CLASH</span></h1>
+        <p class="tagline">Two lanes. Three crowns. One tiny arena.</p>
+
+        <div class="difficulty" role="group" aria-label="Difficulty">
+          <button class="chip" data-difficulty="casual" type="button">Casual</button>
+          <button class="chip selected" data-difficulty="classic" type="button">Classic</button>
+          <button class="chip" data-difficulty="ruthless" type="button">Ruthless</button>
+        </div>
+
+        <button id="play-btn" class="btn primary" type="button">Play</button>
+
+        <div class="howto">
+          <div class="howto-row"><span class="key">1</span><p>Pick a card, then tap your half of the arena to deploy.</p></div>
+          <div class="howto-row"><span class="key">2</span><p>Troops march the bridges, fight, and smash towers.</p></div>
+          <div class="howto-row"><span class="key">3</span><p>Most crowns after 3:00 wins. Take the King for an instant 3-crown win.</p></div>
+        </div>
+        <p class="footnote">Drag a card onto the arena, or tap a card and tap to place. Works with mouse and touch.</p>
+      </section>
+
+      <section id="end-panel" class="panel end-panel hidden" aria-live="polite">
+        <p class="eyebrow" id="end-eyebrow">MATCH COMPLETE</p>
+        <h2 id="end-title" class="result-title">Victory</h2>
+        <div id="end-crowns" class="crown-row" aria-hidden="true"></div>
+        <p id="end-sub" class="end-sub">You broke through their defenses.</p>
+        <div class="stats" id="end-stats"></div>
+        <button id="again-btn" class="btn primary" type="button">Play again</button>
+        <button id="menu-btn" class="btn ghost" type="button">Main menu</button>
+      </section>
+
+      <section id="pause-panel" class="panel pause-panel hidden">
+        <p class="eyebrow">TIME OUT</p>
+        <h2 class="result-title small">Paused</h2>
+        <p class="end-sub">Take a breath. The arena will wait.</p>
+        <button id="resume-btn" class="btn primary" type="button">Resume</button>
+        <button id="restart-btn" class="btn ghost" type="button">Restart match</button>
+        <button id="quit-btn" class="btn ghost" type="button">Quit to menu</button>
+      </section>
+    </div>
+  </div>
+
+  <script src="js/game.js" type="module"></script>
+</body>
+</html>
